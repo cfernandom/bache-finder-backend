@@ -1,0 +1,58 @@
+version: '3.8'
+# run with: docker-compose --env-file .env up -d --build
+
+services:
+
+  ####################################################################################################
+  # DATABASE (MySQL)
+  ####################################################################################################
+  db:
+    image: mysql:8.1
+    ports:
+      - '3306:3306'
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - .docker/mysql_db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - persistent:/var/lib/mysql
+    networks:
+      - bache-finder-network
+  
+  ####################################################################################################
+  # phpMyAdmin
+  ####################################################################################################
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    networks:
+      - bache-finder-network
+
+  ####################################################################################################
+  # backend app
+  ####################################################################################################
+  app:
+    build:
+      context: .docker/php-apache
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+    volumes:
+      - .:/var/www/html:cached
+    networks:
+      - bache-finder-network
+
+####################################################################################################
+networks:
+  bache-finder-network:
+    driver: bridge
+
+volumes:
+  persistent:
+    driver: local
