@@ -3,22 +3,24 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
 
     public function index()
     {
 
         try {
-            $user = auth()->user();
+            $user = User::find(auth()->user()->id);
+            $result['name'] = $user->name;
+            $result['email'] = $user->email;
+            $result['id'] = $user->id;
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'User not found.'
-            ], 404);
+            return $this->sendError('Error.', $e->getMessage(), 500);
         }
-        
-        return response()->json($user);
+
+        return $this->sendResponse($result, 'User retrieved successfully.');
     }
 }
