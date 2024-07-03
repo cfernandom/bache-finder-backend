@@ -17,6 +17,7 @@ class UserController extends BaseController
             $result['name'] = $user->name;
             $result['email'] = $user->email;
             $result['id'] = $user->id;
+            $result['role'] = $user->getRoleNames();
         } catch (\Exception $e) {
             return $this->sendError('Error.', $e->getMessage(), 500);
         }
