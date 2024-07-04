@@ -26,3 +26,5 @@ Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'v1'], functi
 Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
+
+Route::apiResource('potholes', \App\Http\Controllers\Api\PotholeController::class);
