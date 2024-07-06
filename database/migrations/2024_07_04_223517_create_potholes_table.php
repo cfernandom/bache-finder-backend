@@ -13,7 +13,34 @@ return new class extends Migration
     {
         Schema::create('potholes', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->enum('type', [
+                'No definido',
+                'Bache',
+                'Descascaramiento',
+                'Fisura en bloque',
+                'Fisura por deslizamiento',
+                'Fisura por reflexión',
+                'Fisuras longitudinales y transversales',
+                'Fisura transversal',
+                'Hundimiento',
+                'Parche',
+                'Pérdida de agregado',
+                'Piel de cocodrilo'])->default('No definido');
+            $table->string('address');
+            $table->string('image');
+            $table->enum('status', [
+                'Pendiente de revisión',
+                'En revisión',
+                'Resuelto',
+                'Anulado'])->default('Pendiente de revisión');    
+            $table->unsignedBigInteger('user_id');
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
+            $table->text('description')->nullable();
+            $table->json('predictions')->nullable();
+            $table->text('solution_description')->nullable();
+            $table->timestamps(); // created_at, updated_at
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
