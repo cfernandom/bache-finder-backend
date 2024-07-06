@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PotholeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'v1'], function () {
     
     Route::get('/user', [UserController::class, 'index']);
+    Route::apiResource('potholes', PotholeController::class);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
@@ -26,5 +28,3 @@ Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'v1'], functi
 Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
-
-Route::apiResource('potholes', \App\Http\Controllers\Api\PotholeController::class);
