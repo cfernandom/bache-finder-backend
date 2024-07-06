@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePotholeRequest;
 use App\Http\Requests\UpdatePotholeRequest;
+use App\Http\Resources\PotholeCollection;
 use App\Http\Resources\PotholeResource;
 use App\Models\Pothole;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 class PotholeController extends BaseController
@@ -17,9 +17,9 @@ class PotholeController extends BaseController
      */
     public function index()
     {
-        $potholes = auth()->user()->potholes()->get();
+        $potholes = auth()->user()->potholes()->paginate(20);
         return $this->sendResponse(
-            ['potholes' => PotholeResource::collection($potholes)],
+            [new PotholeCollection($potholes)],
             'Potholes retrieved successfully.'
         );
     }
@@ -51,7 +51,7 @@ class PotholeController extends BaseController
     {
         return $this->sendResponse(['pothole' => PotholeResource::make($pothole)], 'Pothole retrieved successfully.');
     }
-    
+
     /**
      * Update the specified resource in storage.
      */
