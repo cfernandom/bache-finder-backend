@@ -19,8 +19,9 @@ class PotholeController extends BaseController
     {
         $potholes = auth()->user()->potholes()->get();
         return $this->sendResponse(
-            [ 'potholes' => PotholeResource::collection($potholes)],
-        'Potholes retrieved successfully.');
+            ['potholes' => PotholeResource::collection($potholes)],
+            'Potholes retrieved successfully.'
+        );
     }
 
     /**
@@ -33,11 +34,10 @@ class PotholeController extends BaseController
             $potholeData = $request->validated();
             $potholeData['image'] = $request->file('image')->store('potholes', 'public');
             $pothole = auth()->user()->potholes()->create($potholeData);
-       
+
             return $this->sendResponse([
                 'pothole' => PotholeResource::make($pothole)
             ], 'Pothole created successfully.');
-       
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $this->sendError('Error.', 'An error occurred while creating the pothole.', 500);
@@ -49,22 +49,21 @@ class PotholeController extends BaseController
      */
     public function show(Pothole $pothole)
     {
-        //
+        return $this->sendResponse(['pothole' => PotholeResource::make($pothole)], 'Pothole retrieved successfully.');
     }
-
+    
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdatePotholeRequest $request, Pothole $pothole)
-    {   
+    {
         try {
             $potholeData = $request->validated();
             $pothole->update($potholeData);
-    
+
             return $this->sendResponse([
                 'pothole' => PotholeResource::make($pothole)
             ], 'Pothole updated successfully.');
-
         } catch (\Exception $e) {
             Log::error('Update Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
             return $this->sendError('Update Error.', 'An error occurred while creating the pothole.', 500);
