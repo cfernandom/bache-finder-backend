@@ -11,7 +11,7 @@ class UpdatePotholeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdatePotholeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'address' => 'sometimes|string|max:255',
+            'type' => 'nullable|string|in:No definido,Bache,Descascaramiento,Fisura en bloque,Fisura por deslizamiento,Fisura por reflexión,Fisuras longitudinales y transversales,Fisura transversal,Hundimiento,Parche,Pérdida de agregado,Piel de cocodrilo',
+            'status' => 'nullable|string|in:Pendiente de revisión,En revisión,Resuelto,Anulado',
+            'description' => 'nullable|string|max:512',
+            'solution_description' => 'nullable|string|max:512',
         ];
     }
 }

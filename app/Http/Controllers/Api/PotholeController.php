@@ -52,8 +52,19 @@ class PotholeController extends BaseController
      * Update the specified resource in storage.
      */
     public function update(UpdatePotholeRequest $request, Pothole $pothole)
-    {
-        //
+    {   
+        try {
+            $potholeData = $request->validated();
+            $pothole->update($potholeData);
+    
+            return $this->sendResponse([
+                'pothole' => PotholeResource::make($pothole)
+            ], 'Pothole updated successfully.');
+
+        } catch (\Exception $e) {
+            Log::error('Update Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
+            return $this->sendError('Update Error.', 'An error occurred while creating the pothole.', 500);
+        }
     }
 
     /**
