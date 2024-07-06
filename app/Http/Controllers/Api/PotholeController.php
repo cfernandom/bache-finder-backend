@@ -16,7 +16,10 @@ class PotholeController extends BaseController
      */
     public function index()
     {
-        //
+        $potholes = auth()->user()->potholes()->get();
+        return $this->sendResponse(
+            [ 'potholes' => PotholeResource::collection($potholes)],
+        'Potholes retrieved successfully.');
     }
 
     /**
