@@ -44,6 +44,8 @@ class DefaultUsersSeeder extends Seeder
             'password' => Hash::make('12345678#'),
         ]);
         $user->assignRole(Roles::USER->value);
-
+        $user->givePermissionTo('CREATE_POTHOLES');
+        $user->givePermissionTo('UPDATE_POTHOLES');
+        $user->givePermissionTo('DELETE_POTHOLES');
     }
 }

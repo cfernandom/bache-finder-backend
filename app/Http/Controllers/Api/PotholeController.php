@@ -29,8 +29,11 @@ class PotholeController extends BaseController
      */
     public function store(StorePotholeRequest $request)
     {
-        try {
+        if (!auth()->user()->can('CREATE_POTHOLES')) {
+            return $this->sendError('Error.', 'You are not authorized to create potholes.', 403);
+        }
 
+        try {
             $potholeData = $request->validated();
             $potholeData['image'] = $request->file('image')->store('potholes', 'public');
             $pothole = auth()->user()->potholes()->create($potholeData);
@@ -38,6 +41,7 @@ class PotholeController extends BaseController
             return $this->sendResponse([
                 'pothole' => PotholeResource::make($pothole)
             ], 'Pothole created successfully.');
+
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $this->sendError('Error.', 'An error occurred while creating the pothole.', 500);
@@ -57,6 +61,10 @@ class PotholeController extends BaseController
      */
     public function update(UpdatePotholeRequest $request, Pothole $pothole)
     {
+        if (!auth()->user()->can('UPDATE_POTHOLES')) {
+            return $this->sendError('Update Error.', 'You do not have permission to update this pothole.', 403);
+        }
+
         try {
             $potholeData = $request->validated();
             $pothole->update($potholeData);
@@ -75,9 +83,14 @@ class PotholeController extends BaseController
      */
     public function destroy(Pothole $pothole)
     {
+        if (!auth()->user()->can('DELETE_POTHOLES')) {
+            return $this->sendError('Delete Error.', 'You do not have permission to delete this pothole.', 403);
+        }
+
         try {
             $pothole->delete();
             return $this->sendResponse([], 'Pothole deleted successfully.');
+
         } catch (\Exception $e) {
             Log::error('Delete Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
             return $this->sendError('Delete Error.', 'An error occurred while deleting the pothole.', 500);
