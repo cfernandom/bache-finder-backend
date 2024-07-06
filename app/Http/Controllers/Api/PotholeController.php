@@ -74,17 +74,11 @@ class PotholeController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Pothole $pothole)
     {
         try {
-            $pothole = Pothole::findOrFail($id);
             $pothole->delete();
             return $this->sendResponse([], 'Pothole deleted successfully.');
-            
-        } catch (ModelNotFoundException $e) {
-            Log::warning('Pothole not found for deletion: ' . $id);
-            return $this->sendError('Delete Error.', 'Pothole not found.', 404);
-            
         } catch (\Exception $e) {
             Log::error('Delete Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
             return $this->sendError('Delete Error.', 'An error occurred while deleting the pothole.', 500);
