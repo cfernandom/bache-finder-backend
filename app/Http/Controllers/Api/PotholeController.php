@@ -7,6 +7,7 @@ use App\Http\Requests\StorePotholeRequest;
 use App\Http\Requests\UpdatePotholeRequest;
 use App\Http\Resources\PotholeResource;
 use App\Models\Pothole;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 class PotholeController extends BaseController
@@ -73,8 +74,20 @@ class PotholeController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pothole $pothole)
+    public function destroy($id)
     {
-        //
+        try {
+            $pothole = Pothole::findOrFail($id);
+            $pothole->delete();
+            return $this->sendResponse([], 'Pothole deleted successfully.');
+            
+        } catch (ModelNotFoundException $e) {
+            Log::warning('Pothole not found for deletion: ' . $id);
+            return $this->sendError('Delete Error.', 'Pothole not found.', 404);
+            
+        } catch (\Exception $e) {
+            Log::error('Delete Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
+            return $this->sendError('Delete Error.', 'An error occurred while deleting the pothole.', 500);
+        }
     }
 }
