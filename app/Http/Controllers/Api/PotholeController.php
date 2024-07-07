@@ -8,6 +8,8 @@ use App\Http\Requests\UpdatePotholeRequest;
 use App\Http\Resources\PotholeCollection;
 use App\Http\Resources\PotholeResource;
 use App\Models\Pothole;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class PotholeController extends BaseController
@@ -41,7 +43,6 @@ class PotholeController extends BaseController
             return $this->sendResponse([
                 'pothole' => PotholeResource::make($pothole)
             ], 'Pothole created successfully.');
-
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $this->sendError('Error.', 'An error occurred while creating the pothole.', 500);
@@ -90,10 +91,48 @@ class PotholeController extends BaseController
         try {
             $pothole->delete();
             return $this->sendResponse([], 'Pothole deleted successfully.');
-
         } catch (\Exception $e) {
             Log::error('Delete Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
             return $this->sendError('Delete Error.', 'An error occurred while deleting the pothole.', 500);
+        }
+    }
+
+    public function predict(Pothole $pothole)
+    {
+        $imagePath = storage_path('app/public/' . $pothole->image);
+
+        if (!file_exists($imagePath)) {
+            return $this->sendError('Image Not Found', 'The image file does not exist.', 404);
+        }
+
+        try {
+            $imageContent = file_get_contents($imagePath);
+
+            $response = Http::attach(
+                'file',
+                $imageContent,
+                'pothole.jpg',
+            )->post(env('ML_SERVER_URL') . '/predict');
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+
+                if (!isset($responseData['prediction'])) {
+                    return $this->sendError('Invalid Response', 'The prediction server returned an invalid response.', 500);
+                }
+
+                $predictions = $responseData['prediction'];
+                $pothole->update(['predictions' => $predictions]);
+
+                return $this->sendResponse([
+                    'predictions' => $predictions
+                ], 'Pothole predicted successfully.');
+            } else {
+                return $this->sendError('Predict Server Error.', 'The prediction server returned an error.', $response->status());
+            }
+        } catch (\Exception $e) {
+            Log::error('Predict Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
+            return $this->sendError('Predict Error.', 'An error occurred while predicting the pothole.', 500);
         }
     }
 }
