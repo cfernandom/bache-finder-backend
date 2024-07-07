@@ -22,7 +22,7 @@ class PotholeResource extends JsonResource
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'status' => $this->status,
-            'user' => $this->user_id,
+            'user_id' => $this->user_id,
             'description' => $this->description,
             'solution_description' => $this->solution_description,
             'predictions' => $this->predictions,
