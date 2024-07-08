@@ -47,6 +47,8 @@ services:
       - .:/var/www/html:cached
     networks:
       - bache-finder-network
+    command: >
+      /bin/sh -c "php artisan storage:link && apache2-foreground"
 
 ####################################################################################################
 networks:

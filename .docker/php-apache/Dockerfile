@@ -45,12 +45,16 @@ RUN composer global require "laravel/installer"
 
 # set working directory
 WORKDIR $APP_HOME
-USER ${USERNAME}
 
+RUN mkdir -p /var/www/html/storage \
+&& chown -R www-data:www-data /var/www/html/storage
+#RUN php artisan storage:link
+
+USER ${USERNAME}
 # copy source files and config file
 # COPY --chown=${USERNAME}:${USERNAME} . $APP_HOME/
 # COPY --chown=${USERNAME}:${USERNAME} .env.$ENV $APP_HOME/.env
 
-USER root
+# USER root
 
 # CMD ["apache2-foreground"]
