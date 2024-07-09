@@ -11,9 +11,10 @@ COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 
 RUN apt-get update \
     && apt-get install -y libzip-dev \
-    && apt-get install -y zlib1g-dev \
+    && apt-get install -y zlib1g-dev libpng-dev libjpeg-dev libfreetype6-dev\
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install zip pdo_mysql
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install zip pdo_mysql gd
 RUN a2enmod rewrite
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\UploadImageHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePotholeRequest;
 use App\Http\Requests\UpdatePotholeRequest;
@@ -36,8 +37,10 @@ class PotholeController extends BaseController
         }
 
         try {
-            $potholeData = $request->validated();
-            $potholeData['image'] = $request->file('image')->store('potholes', 'public');
+            
+            $potholeData = $request->safe()->except('image');
+            $potholeData['image'] = UploadImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
+
             $pothole = auth()->user()->potholes()->create($potholeData);
 
             return $this->sendResponse([
@@ -67,11 +70,16 @@ class PotholeController extends BaseController
         }
 
         try {
-            $potholeData = $request->validated();
+            $potholeData = $request->safe()->except('image');
+
+            if ($request->has('image')) {
+                $potholeData['image'] = UploadImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
+            }
+            
             $pothole->update($potholeData);
 
             return $this->sendResponse([
-                'pothole' => PotholeResource::make($pothole)
+                'pothole' => PotholeResource::make($pothole->fresh())
             ], 'Pothole updated successfully.');
         } catch (\Exception $e) {
             Log::error('Update Pothole Error: ' . $e->getMessage(), ['exception' => $e]);

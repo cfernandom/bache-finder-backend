@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Base64ImageRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePotholeRequest extends FormRequest
@@ -23,7 +24,7 @@ class StorePotholeRequest extends FormRequest
     {
         return [
             'address' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => ['required', new Base64ImageRule],
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'user_id' => 'required|exists:users,id',

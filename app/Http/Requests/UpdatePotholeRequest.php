@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Base64ImageRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePotholeRequest extends FormRequest
@@ -27,6 +28,7 @@ class UpdatePotholeRequest extends FormRequest
             'status' => 'nullable|string|in:Pendiente de revisión,En revisión,Resuelto,Anulado',
             'description' => 'nullable|string|max:512',
             'solution_description' => 'nullable|string|max:512',
+            'image' => [new Base64ImageRule],
         ];
     }
 }
