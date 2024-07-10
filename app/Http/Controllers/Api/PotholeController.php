@@ -22,7 +22,7 @@ class PotholeController extends BaseController
     {
         $potholes = auth()->user()->potholes()->paginate(20);
         return $this->sendResponse(
-            [new PotholeCollection($potholes)],
+            new PotholeCollection($potholes),
             'Potholes retrieved successfully.'
         );
     }
