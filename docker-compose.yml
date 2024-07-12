@@ -37,18 +37,62 @@ services:
   ####################################################################################################
   # backend app
   ####################################################################################################
-  app:
-    build:
-      context: .docker/php-apache
-      dockerfile: Dockerfile
+  # app:
+  #   build:
+  #     context: .docker/php-apache
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '80:80'
+  #   volumes:
+  #     - .:/var/www/html:cached
+  #   networks:
+  #     - bache-finder-network
+  #   command: >
+  #     /bin/sh -c "php artisan storage:link && apache2-foreground"
+
+  ####################################################################################################
+  #  nginx
+  ####################################################################################################
+  nginx:
+    image: nginx:stable-alpine
     ports:
-      - '80:80'
+        - '${APP_PORT:-80}:80'
+    links:
+        - php:php
     volumes:
-      - .:/var/www/html:cached
+        - .:/var/www/html
+        - ./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+        - ./.docker/nginx/site.conf:/etc/nginx/conf.d/default.conf:rw
+        - ./.docker/logs/nginx:/var/logs/nginx:rw
+    depends_on:
+        - php
+        - db
     networks:
-      - bache-finder-network
+        - bache-finder-network
+    restart: always
+    tty: true
+
+  ####################################################################################################
+  # php
+  ####################################################################################################
+  php:
+    build:
+        context: ./.docker/php
+        dockerfile: Dockerfile
+    volumes:
+        - .:/var/www/html
+    ports:
+        - '${FORWARD_PHP_PORT:-9000}:9000'
+    networks:
+        - bache-finder-network
+    depends_on:
+        - db
+    restart: unless-stopped
     command: >
-      /bin/sh -c "php artisan storage:link && apache2-foreground"
+      /bin/sh -c "chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && php-fpm"
+    tty: true
+    links:
+        - db:db
 
 ####################################################################################################
 networks:
