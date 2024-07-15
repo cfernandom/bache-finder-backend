@@ -24,7 +24,7 @@ services:
   # phpMyAdmin
   ####################################################################################################
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
     ports:
       - 8080:80
     environment:
@@ -88,8 +88,8 @@ services:
     depends_on:
         - db
     restart: unless-stopped
-    command: >
-      /bin/sh -c "chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && php-fpm"
+#   command: >
+#      /bin/sh -c "chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && php-fpm"
     tty: true
     links:
         - db:db

@@ -14,6 +14,16 @@ RUN apt-get install -y wget gnupg gosu curl ca-certificates zip unzip git superv
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
     install-php-extensions bcmath mbstring intl mysqli pdo pdo_mysql opcache ldap readline pgsql sqlite3 gd curl imap xml zip bcmath soap imagick memcached
 
+# Descarga y ejecuta el script de configuración de NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh && \
+    bash nodesource_setup.sh && \
+    rm nodesource_setup.sh
+
+# Instala Node.js y npm
+RUN apt-get update && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 RUN apt-get -y autoremove && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
