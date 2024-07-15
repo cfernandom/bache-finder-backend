@@ -29,10 +29,10 @@ COPY php.ini "${PHP_INI_DIR}/conf.d/99-app.ini"
 RUN apt-get update && apt-get install -y supervisor
 COPY laravel-worker.conf "/etc/supervisor"
 
-# Si tienes archivo compser lock usa composer update en lugar de composer install
-CMD composer update && php /var/www/html/artisan db:wipe && php /var/www/html/artisan migrate:refresh --seed && \
- php /var/www/html/artisan key:generate && rm -rf /var/www/html/public/storage && \
- supervisord -s -c /etc/supervisor/laravel-worker.conf && \
- php /var/www/html/artisan storage:link && php-fpm
+# Copiar el script de entrada
+COPY entrypoint.sh /usr/local/bin/
+
+# Usa el script de entrada como punto de entrada
+CMD ["/usr/local/bin/entrypoint.sh"]
 
 EXPOSE 9000
