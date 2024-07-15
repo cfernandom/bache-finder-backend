@@ -107,7 +107,7 @@ class PotholeController extends BaseController
 
     public function predict(Pothole $pothole)
     {
-        $imagePath = storage_path('app/public/' . $pothole->image);
+        $imagePath = storage_path('app/public/' . str_replace(env('APP_URL') . '/storage/', '', $pothole->image));
 
         if (!file_exists($imagePath)) {
             return $this->sendError('Image Not Found', 'The image file does not exist on' . $imagePath, 404);
