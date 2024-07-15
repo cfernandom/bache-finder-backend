@@ -110,7 +110,7 @@ class PotholeController extends BaseController
         $imagePath = storage_path('app/public/' . $pothole->image);
 
         if (!file_exists($imagePath)) {
-            return $this->sendError('Image Not Found', 'The image file does not exist.', 404);
+            return $this->sendError('Image Not Found', 'The image file does not exist on' . $imagePath, 404);
         }
 
         try {
