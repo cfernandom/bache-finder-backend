@@ -25,7 +25,7 @@ class GoogleMapsProxyController extends Controller
 
         $response = Http::get('https://maps.googleapis.com/maps/api/place/' . $endpoint, $params);
 
-        return response($response->body())->header('Content-Type', 'application/javascript');
+        return response($response->body())->header('Content-Type', 'application/json; charset=UTF-8');
     }
 
     public function geocode(Request $request, $endpoint)
@@ -35,6 +35,6 @@ class GoogleMapsProxyController extends Controller
 
         $response = Http::get('https://maps.googleapis.com/maps/api/geocode/' . $endpoint, $params);
 
-        return response($response->body())->header('Content-Type', 'application/javascript');
+        return response($response->body())->header('Content-Type', 'application/json; charset=UTF-8');
     }
 }
