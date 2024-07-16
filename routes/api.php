@@ -24,11 +24,17 @@ Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'v1'], functi
     Route::post('/potholes/{pothole}/predict', [PotholeController::class, 'predict']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
+
 });
+
 
 
 Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::post('/login', [AuthController::class, 'login']);
-
-    Route::get('/google-maps-proxy', [GoogleMapsProxyController::class, 'proxy']);
+    
+    Route::prefix('google-maps-proxy')->group(function () {
+        Route::get('/js', [GoogleMapsProxyController::class, 'js']);
+        Route::get('/geocode/{endpoint}', [GoogleMapsProxyController::class, 'geocode'])->where('endpoint', '.*');
+        Route::get('/place/{endpoint}', [GoogleMapsProxyController::class, 'place'])->where('endpoint', '.*');
+    });
 });
