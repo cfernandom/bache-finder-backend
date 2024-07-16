@@ -97,7 +97,7 @@ services:
 ####################################################################################################
 networks:
   bache-finder-network:
-    driver: bridge
+    external: true
 
 volumes:
   persistent:
