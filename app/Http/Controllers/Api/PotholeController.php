@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Constants\Pothole as ConstantsPothole;
 use App\Helpers\UploadImageHelper;
 use App\Http\Controllers\Controller;
+use App\Helpers\ArrayHelper;
 use App\Http\Requests\StorePotholeRequest;
 use App\Http\Requests\UpdatePotholeRequest;
 use App\Http\Resources\PotholeCollection;
@@ -129,13 +131,15 @@ class PotholeController extends BaseController
                     return $this->sendError('Invalid Response', 'The prediction server returned an invalid response.', 500);
                 }
 
-                $predictions = $responseData['prediction'];
-                $pothole->update(['predictions' => $predictions]);
+                $weights = $responseData['prediction'];
+                $potholeType = ConstantsPothole::TYPES[ArrayHelper::getIndexOfLargestNumber($weights) + 1];
 
                 return $this->sendResponse([
-                    'predictions' => $predictions
+                    'weights' => $weights,
+                    'type' => $potholeType,
                 ], 'Pothole predicted successfully.');
             } else {
+                Log::error('Predict Pothole Error: ' . $response->body(), ['response' => $response->json()]);
                 return $this->sendError('Predict Server Error.', 'The prediction server returned an error.', $response->status());
             }
         } catch (\Exception $e) {
