@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Rules\Base64ImageRule;
+use App\Rules\NumericArrayRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePotholeRequest extends FormRequest
@@ -32,7 +33,7 @@ class UpdatePotholeRequest extends FormRequest
             'description' => 'nullable|string|max:512',
             'solution_description' => 'nullable|string|max:512',
             'image' => [new Base64ImageRule],
-            'predictions' => 'nullable|json', // TODO: validate numeric array
+            'predictions' => ['nullable', 'json', new NumericArrayRule],
         ];
     }
 }
