@@ -32,6 +32,7 @@ class UpdatePotholeRequest extends FormRequest
             'description' => 'nullable|string|max:512',
             'solution_description' => 'nullable|string|max:512',
             'image' => [new Base64ImageRule],
+            'predictions' => 'nullable|json', // TODO: validate numeric array
         ];
     }
 }
