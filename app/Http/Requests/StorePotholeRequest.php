@@ -31,6 +31,7 @@ class StorePotholeRequest extends FormRequest
             'user_id' => 'required|exists:users,id',
             'type' => 'nullable|string|in:No definido,Bache,Descascaramiento,Fisura en bloque,Fisura por deslizamiento,Fisura por reflexión,Fisuras longitudinales y transversales,Fisura transversal,Hundimiento,Parche,Pérdida de agregado,Piel de cocodrilo',
             'status' => 'nullable|string|in:Pendiente de revisión,En revisión,Resuelto,Anulado',
+            'description' => 'nullable|string|max:512',
         ];
     }
 
