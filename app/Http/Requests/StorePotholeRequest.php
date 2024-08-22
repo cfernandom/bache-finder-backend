@@ -25,7 +25,7 @@ class StorePotholeRequest extends FormRequest
         return [
             'address' => 'required|string|max:255',
             'image' => ['required', new Base64ImageRule],
-            'locality' => 'required|string|in:Usaquén,Chapinero,Santa Fe,San Cristóbal,Usme,Tunjuelito,Bosa,Kennedy,Fontibón,Engativá,Suba,Barrios Unidos,Teusaquillo,Los Mártires,Antonio Nariño,Puente Aranda,Candelaria,Rafael Uribe Uribe,Ciudad Bolívar,Sumapaz',
+            'locality' => 'required|string|in:Usaquén,Chapinero,Santa Fé,San Cristóbal,Usme,Tunjuelito,Bosa,Kennedy,Fontibón,Engativá,Suba,Barrios Unidos,Teusaquillo,Los Mártires,Antonio Nariño,Puente Aranda,Candelaria,Rafael Uribe Uribe,Ciudad Bolívar,Sumapaz',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'user_id' => 'required|exists:users,id',

@@ -26,7 +26,7 @@ class UpdatePotholeRequest extends FormRequest
         return [
             'address' => 'sometimes|string|max:255',
             'type' => 'nullable|string|in:No definido,Bache,Descascaramiento,Fisura en bloque,Fisura por deslizamiento,Fisura por reflexión,Fisuras longitudinales y transversales,Fisura transversal,Hundimiento,Parche,Pérdida de agregado,Piel de cocodrilo',
-            'locality' => 'sometimes|string|in:Usaquén,Chapinero,Santa Fe,San Cristóbal,Usme,Tunjuelito,Bosa,Kennedy,Fontibón,Engativá,Suba,Barrios Unidos,Teusaquillo,Los Mártires,Antonio Nariño,Puente Aranda,Candelaria,Rafael Uribe Uribe,Ciudad Bolívar,Sumapaz',
+            'locality' => 'sometimes|string|in:Usaquén,Chapinero,Santa Fé,San Cristóbal,Usme,Tunjuelito,Bosa,Kennedy,Fontibón,Engativá,Suba,Barrios Unidos,Teusaquillo,Los Mártires,Antonio Nariño,Puente Aranda,Candelaria,Rafael Uribe Uribe,Ciudad Bolívar,Sumapaz',
             'latitude' => 'sometimes|numeric|between:-90,90',
             'longitude' => 'sometimes|numeric|between:-180,180',
             'status' => 'nullable|string|in:Pendiente de revisión,En revisión,Resuelto,Anulado',
