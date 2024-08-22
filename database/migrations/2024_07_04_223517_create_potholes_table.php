@@ -55,7 +55,7 @@ return new class extends Migration
                 'Puente Aranda',
                 'Rafael Uribe Uribe',
                 'San Cristóbal',
-                'Santa Fe',
+                'Santa Fé',
                 'Suba',
                 'Sumapaz',
                 'Teusaquillo',
