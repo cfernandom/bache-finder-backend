@@ -22,7 +22,7 @@ class PotholeController extends BaseController
      */
     public function index()
     {
-        $potholes = auth()->user()->potholes()->paginate(20);
+        $potholes = auth()->user()->potholes()->orderBy('created_at', 'desc')->paginate(20);
         return $this->sendResponse(
             new PotholeCollection($potholes),
             'Potholes retrieved successfully.'
