@@ -190,7 +190,7 @@ class PotholeController extends BaseController
                 $pothole->update(['predictions' => $weights]);
 
                 return $this->sendResponse([
-                    'pothole' => PotholeResource::make($pothole),
+                    'pothole' => PotholeResource::make($pothole->fresh()),
                 ], 'Pothole created and predicted successfully.');
             } else {
                 Log::error('Predict Pothole Error: ' . $response->body(), ['response' => $response->json()]);
