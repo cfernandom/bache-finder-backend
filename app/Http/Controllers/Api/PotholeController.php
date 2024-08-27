@@ -39,7 +39,7 @@ class PotholeController extends BaseController
         }
 
         try {
-            
+
             $potholeData = $request->safe()->except('image');
             $potholeData['image'] = UploadImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
 
@@ -77,7 +77,7 @@ class PotholeController extends BaseController
             if ($request->has('image')) {
                 $potholeData['image'] = UploadImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
             }
-            
+
             $pothole->update($potholeData);
 
             return $this->sendResponse([
@@ -145,6 +145,59 @@ class PotholeController extends BaseController
         } catch (\Exception $e) {
             Log::error('Predict Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
             return $this->sendError('Predict Error.', 'An error occurred while predicting the pothole.', 500);
+        }
+    }
+
+    public function storeAndPredict(StorePotholeRequest $request)
+    {
+        if (!auth()->user()->can('CREATE_POTHOLES')) {
+            return $this->sendError('Error.', 'You are not authorized to create potholes.', 403);
+        }
+
+        try {
+            // Store the pothole
+            $potholeData = $request->safe()->except('image');
+            $potholeData['image'] = UploadImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
+
+            $pothole = auth()->user()->potholes()->create($potholeData);
+
+            // Predict the pothole type
+            $imagePath = storage_path('app/public/' . str_replace(env('APP_URL') . '/storage/', '', $pothole->image));
+
+            if (!file_exists($imagePath)) {
+                return $this->sendError('Image Not Found', 'The image file does not exist on ' . $imagePath, 404);
+            }
+
+            $imageContent = file_get_contents($imagePath);
+
+            $response = Http::attach(
+                'file',
+                $imageContent,
+                'pothole.jpg',
+            )->post(env('ML_SERVER_URL') . '/predict');
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+
+                if (!isset($responseData['prediction'])) {
+                    return $this->sendError('Invalid Response', 'The prediction server returned an invalid response.', 500);
+                }
+
+                $weights = $responseData['prediction'];
+                $potholeType = ConstantsPothole::TYPES[ArrayHelper::getIndexOfLargestNumber($weights) + 1];
+
+                return $this->sendResponse([
+                    'pothole' => PotholeResource::make($pothole),
+                    'weights' => $weights,
+                    'type' => $potholeType,
+                ], 'Pothole created and predicted successfully.');
+            } else {
+                Log::error('Predict Pothole Error: ' . $response->body(), ['response' => $response->json()]);
+                return $this->sendError('Predict Server Error.', 'The prediction server returned an error.', $response->status());
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->sendError('Error.', 'An error occurred while creating and predicting the pothole.', 500);
         }
     }
 }

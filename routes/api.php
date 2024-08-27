@@ -21,6 +21,7 @@ Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'v1'], functi
     
     Route::get('/user', [UserController::class, 'index']);
     Route::apiResource('potholes', PotholeController::class);
+    Route::post('/potholes/store-and-predict', [PotholeController::class, 'storeAndPredict']);
     Route::post('/potholes/{pothole}/predict', [PotholeController::class, 'predict']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
