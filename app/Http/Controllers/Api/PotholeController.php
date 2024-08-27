@@ -186,10 +186,11 @@ class PotholeController extends BaseController
                 $weights = $responseData['prediction'];
                 $potholeType = ConstantsPothole::TYPES[ArrayHelper::getIndexOfLargestNumber($weights) + 1];
 
+                $pothole->update(['type' => $potholeType]);
+                $pothole->update(['predictions' => $weights]);
+
                 return $this->sendResponse([
                     'pothole' => PotholeResource::make($pothole),
-                    'weights' => $weights,
-                    'type' => $potholeType,
                 ], 'Pothole created and predicted successfully.');
             } else {
                 Log::error('Predict Pothole Error: ' . $response->body(), ['response' => $response->json()]);
