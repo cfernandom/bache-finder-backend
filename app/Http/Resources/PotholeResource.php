@@ -26,7 +26,7 @@ class PotholeResource extends JsonResource
             'user_id' => $this->user_id,
             'description' => $this->description,
             'solution_description' => $this->solution_description,
-            'predictions' => $this->predictions,
+            'predictions' => json_encode($this->predictions),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];
