@@ -32,7 +32,8 @@ Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'v1'], functi
 
 Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::post('/login', [AuthController::class, 'login']);
-    
+    Route::post('/users', [AuthController::class, 'register']);
+
     Route::prefix('google-maps-proxy')->group(function () {
         Route::get('/js', [GoogleMapsProxyController::class, 'js']);
         Route::get('/geocode/{endpoint}', [GoogleMapsProxyController::class, 'geocode'])->where('endpoint', '.*');

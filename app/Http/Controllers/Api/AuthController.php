@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
+use App\Http\Requests\CreateUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,7 +24,6 @@ class AuthController extends BaseController
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors(), 401);
         }
-        
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = User::where('email', $request->email)->first();
@@ -48,5 +48,14 @@ class AuthController extends BaseController
         }
 
         return $this->sendResponse([], 'User logged out successfully.');
+    }
+
+    public function register(CreateUserRequest $request)
+    {
+        User::create(
+            $request->validated(),
+        );
+
+        return $this->sendResponse([], 'User registered successfully.');
     }
 }
