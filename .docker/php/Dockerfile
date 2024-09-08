@@ -12,7 +12,7 @@ RUN apt-get install -y wget gnupg gosu curl ca-certificates zip unzip git superv
     libpng-dev librsvg2-bin fswatch ffmpeg nano
 
 RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
-    install-php-extensions bcmath mbstring intl mysqli pdo pdo_mysql opcache ldap readline pgsql sqlite3 gd curl imap xml zip bcmath soap imagick memcached
+    install-php-extensions bcmath mbstring intl mysqli pdo pdo_mysql opcache ldap readline pgsql sqlite3 gd curl imap xml zip bcmath soap memcached
 
 # Descarga y ejecuta el script de configuración de NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh && \
@@ -43,6 +43,6 @@ COPY laravel-worker.conf "/etc/supervisor"
 COPY entrypoint.sh /usr/local/bin/
 
 # Usa el script de entrada como punto de entrada
-CMD ["/usr/local/bin/entrypoint.sh"]
+# CMD ["/usr/local/bin/entrypoint.sh"]
 
 EXPOSE 9000
