@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\Roles;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\CreateUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends BaseController
@@ -52,10 +55,18 @@ class AuthController extends BaseController
 
     public function register(CreateUserRequest $request)
     {
-        User::create(
-            $request->validated(),
-        );
+        DB::beginTransaction();
+        try {
+            $user = User::create($request->validated());
+            $user->assignRole(Roles::USER->value);
 
-        return $this->sendResponse([], 'User registered successfully.');
+            DB::commit();
+            return $this->sendResponse([], 'User registered successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Create User Error: ' . $e->getMessage(), ['exception' => $e]);
+            return $this->sendError('Error.', 'An error occurred while creating the user.', 500);
+        }
     }
 }
