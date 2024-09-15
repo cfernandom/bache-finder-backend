@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GoogleMapsProxyController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PotholeController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['api', 'auth:sanctum'], 'prefix' => 'v1'], function () {
     
     Route::get('/user', [UserController::class, 'index']);
+    Route::patch('/profile', [ProfileController::class, 'update']);
     Route::apiResource('potholes', PotholeController::class);
     Route::post('/potholes/store-and-predict', [PotholeController::class, 'storeAndPredict']);
     Route::post('/potholes/{pothole}/predict', [PotholeController::class, 'predict']);
