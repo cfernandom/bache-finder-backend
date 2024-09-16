@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Constants\Pothole as ConstantsPothole;
+use App\Enums\Roles;
 use App\Helpers\UploadImageHelper;
 use App\Http\Controllers\Controller;
 use App\Helpers\ArrayHelper;
@@ -22,7 +23,14 @@ class PotholeController extends BaseController
      */
     public function index()
     {
-        $potholes = auth()->user()->potholes()->orderBy('created_at', 'desc')->paginate(20);
+        $this->authorize('viewAny', Pothole::class);
+
+        if (auth()->user()->hasRole([Roles::ADMIN->value, Roles::INSTITUTION->value, Roles::SUPER_ADMIN->value])) {
+            $potholes = Pothole::orderBy('created_at', 'desc')->paginate(20);
+        } else {
+            $potholes = auth()->user()->potholes()->orderBy('created_at', 'desc')->paginate(20);
+        }
+        
         return $this->sendResponse(
             new PotholeCollection($potholes),
             'Potholes retrieved successfully.'
@@ -34,9 +42,7 @@ class PotholeController extends BaseController
      */
     public function store(StorePotholeRequest $request)
     {
-        if (!auth()->user()->can('CREATE_POTHOLES')) {
-            return $this->sendError('Error.', 'You are not authorized to create potholes.', 403);
-        }
+        $this->authorize('create', Pothole::class);
 
         try {
 
@@ -59,6 +65,7 @@ class PotholeController extends BaseController
      */
     public function show(Pothole $pothole)
     {
+        $this->authorize('view', $pothole);
         return $this->sendResponse(['pothole' => PotholeResource::make($pothole)], 'Pothole retrieved successfully.');
     }
 
@@ -67,9 +74,7 @@ class PotholeController extends BaseController
      */
     public function update(UpdatePotholeRequest $request, Pothole $pothole)
     {
-        if (!auth()->user()->can('UPDATE_POTHOLES')) {
-            return $this->sendError('Update Error.', 'You do not have permission to update this pothole.', 403);
-        }
+        $this->authorize('update', $pothole);
 
         try {
             $potholeData = $request->safe()->except('image');
@@ -150,9 +155,7 @@ class PotholeController extends BaseController
 
     public function storeAndPredict(StorePotholeRequest $request)
     {
-        if (!auth()->user()->can('CREATE_POTHOLES')) {
-            return $this->sendError('Error.', 'You are not authorized to create potholes.', 403);
-        }
+        $this->authorize('create', Pothole::class);
 
         try {
             // Store the pothole
