@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Constants\Pothole as ConstantsPothole;
 use App\Enums\Roles;
-use App\Helpers\UploadImageHelper;
+use App\Helpers\ImageHelper;
 use App\Http\Controllers\Controller;
 use App\Helpers\ArrayHelper;
 use App\Http\Requests\StorePotholeRequest;
@@ -47,7 +47,7 @@ class PotholeController extends BaseController
         try {
 
             $potholeData = $request->safe()->except('image');
-            $potholeData['image'] = UploadImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
+            $potholeData['image'] = ImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
 
             $pothole = auth()->user()->potholes()->create($potholeData);
 
@@ -80,7 +80,7 @@ class PotholeController extends BaseController
             $potholeData = $request->safe()->except('image');
 
             if ($request->has('image')) {
-                $potholeData['image'] = UploadImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
+                $potholeData['image'] = ImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
             }
 
             $pothole->update($potholeData);
@@ -99,11 +99,16 @@ class PotholeController extends BaseController
      */
     public function destroy(Pothole $pothole)
     {
-        if (!auth()->user()->can('DELETE_POTHOLES')) {
-            return $this->sendError('Delete Error.', 'You do not have permission to delete this pothole.', 403);
-        }
+        // if (!auth()->user()->can('DELETE_POTHOLES')) {
+        //     return $this->sendError('Delete Error.', 'You do not have permission to delete this pothole.', 403);
+        // }
+
+        $this->authorize('delete', $pothole);
 
         try {
+            // delete image
+            ImageHelper::deleteImage($pothole->image);
+            
             $pothole->delete();
             return $this->sendResponse([], 'Pothole deleted successfully.');
         } catch (\Exception $e) {
@@ -160,7 +165,7 @@ class PotholeController extends BaseController
         try {
             // Store the pothole
             $potholeData = $request->safe()->except('image');
-            $potholeData['image'] = UploadImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
+            $potholeData['image'] = ImageHelper::uploadImage($request->get('image'), 'potholes/', 'pothole_');
 
             $pothole = auth()->user()->potholes()->create($potholeData);
 
