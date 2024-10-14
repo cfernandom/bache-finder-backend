@@ -17,7 +17,16 @@ class ImageHelper
         return $filePath;
     }
 
-    public static function deleteImage(string $path) {
-        Storage::disk('public')->delete($path);
+    public static function deleteImage(string $relativePath)  {
+        if (Storage::disk('public')->exists($relativePath)) {
+            $deleted = Storage::disk('public')->delete($relativePath);
+            if ($deleted) {
+                return "Imagen del recurso eliminada correctamente.";
+            } else {
+                return $relativePath . "No se pudo eliminar la imagen del recurso.";
+            }
+        } else {
+            return $relativePath . "La imagen del recurso no fue encontrada.";
+        }
     }
 }

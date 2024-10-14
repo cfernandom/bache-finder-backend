@@ -106,11 +106,14 @@ class PotholeController extends BaseController
         $this->authorize('delete', $pothole);
 
         try {
-            // delete image
-            ImageHelper::deleteImage($pothole->image);
-            
+            $imageUrl = $pothole->image;
+            if ($pos = strstr($imageUrl, '/storage/')) {
+                $imageRelativePath = ltrim($pos, '/storage/');
+            }
+            $imageDeletedMessage = ImageHelper::deleteImage($imageRelativePath);
+        
             $pothole->delete();
-            return $this->sendResponse([], 'Pothole deleted successfully.');
+            return $this->sendResponse([], 'Pothole deleted successfully. ' . $imageDeletedMessage);
         } catch (\Exception $e) {
             Log::error('Delete Pothole Error: ' . $e->getMessage(), ['exception' => $e]);
             return $this->sendError('Delete Error.', 'An error occurred while deleting the pothole.', 500);
