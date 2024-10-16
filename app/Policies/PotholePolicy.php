@@ -58,7 +58,7 @@ class PotholePolicy
      */
     public function delete(User $user, Pothole $pothole): bool
     {
-        return $user->hasRole([Roles::ADMIN->value, Roles::INSTITUTION->value]);
+        return $user->hasRole([Roles::ADMIN->value, Roles::INSTITUTION->value]) || $user->id === $pothole->user_id;
     }
 
     /**
